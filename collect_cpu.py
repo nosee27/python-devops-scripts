@@ -7,7 +7,7 @@ import os
 db_config={
         'host':'localhost',
         'user':'root',
-        'password':os.environ.get('MySQL_PASSWORD','Yang228056@'),
+        'password':os.environ.get('MySQL_PASSWORD','password'),
         'database':'devops',
         'charset':'utf8mb4'
         }
