@@ -20,7 +20,7 @@ logger=logging.getLogger("CpuMonitor")
 db_config={
         'host':'localhost',
         'user':'root',
-        'password':os.environ.get('MYSQL_PASSWORD','Yang228056@'),
+        'password':os.environ.get('MYSQL_PASSWORD',''),
         'database':'devops',
         'charset':'utf8mb4'
         }
