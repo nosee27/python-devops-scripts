@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor,as_completed
 db_config={
         'host':'localhost',
         'user':'root',
-        'password':'Yang228056@',
+        'password':'',
         'database':'devops',
         'charset':'utf8mb4'
         }
