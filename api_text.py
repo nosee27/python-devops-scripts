@@ -17,6 +17,6 @@ def main():
         stars=data.get('stargazers_count','default')
         print(f"stars are {stars}")
     except Exception as e:
-        print(e)
+        print(f"错误原因为{e}")
 if __name__=="__main__":
     main()
