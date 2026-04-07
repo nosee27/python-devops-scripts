@@ -35,7 +35,7 @@ def call_api(ip):
         origin=data.get("origin","default")
         return ip,True,f"匹配成功ip为{origin}"
     except Exception as e:
-        return ip,False,f"匹配失败原因为{e}"
+        return ip,False,f"匹配失败原因为这个{e}"
 def main():
     ips=query_server_ips()
     if not ips:
