@@ -6,22 +6,20 @@ import pymysql
 import sys
 import psutil
 from datetime import datetime
-LOG_FILE=os.path.expanduser("~/cpu_monitor.log")
+file_log=os.path.expanduser("~/cpu_monitor.log")
 logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s-%(name)s-%(levelname)s-%(message)s',
+        format="%(asctime)s-%(name)s-%(levelname)s-%(message)s",
         handlers=[
-            logging.FileHandler(LOG_FILE),
-        logging.StreamHandler(sys.stdout)
-        ]
-)
+            logging.FileHandler(file_log),
+            logging.StreamHandler(sys.stdout)
+            ]
+        )
 logger=logging.getLogger("CpuMonitor")
-
 db_config={
         'host':'localhost',
         'user':'root',
-        'password':os.environ.get('MYSQL_PASSWORD','Yang228056@'),
-        'password':os.environ.get('MySQL_PASSWORD','password'),
+        'password':os.environ.get('MySQL_PASSWORD','Yang228056@'),
         'database':'devops',
         'charset':'utf8mb4'
         }
