@@ -6,25 +6,32 @@ import pymysql
 import sys
 import psutil
 from datetime import datetime
-file_log=os.path.expanduser("~/cpu_monitor.log")
+import configparser
+config_file=os.path.expanduser("~/bin/config.ini")
+config=configparser.ConfigParser()
+try:
+    config.read(config_file)
+    db_config={
+            'host':config.get('database','host'),
+            'user':config.get('database','user'),
+            'password':config.get('database','password'),
+            'database':config.get('database','database'),
+            'charset':config.get('database','charset')
+            }
+    server_id=config.getint('monitor','server_id')
+    log_file=os.path.expanduser(config.get('monitor','log_file'))
+except Exception as e:
+    print(e)
+    sys.exit(1)
 logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s-%(name)s-%(levelname)s-%(message)s",
         handlers=[
-            logging.FileHandler(file_log),
+            logging.FileHandler(log_file),
             logging.StreamHandler(sys.stdout)
             ]
         )
 logger=logging.getLogger("CpuMonitor")
-db_config={
-        'host':'localhost',
-        'user':'root',
-        'password':os.environ.get('MySQL_PASSWORD','Yang228056@'),
-        'database':'devops',
-        'charset':'utf8mb4'
-        }
-server_id=1
-
 class CpuMonitor:
     def __init__(self,server_id,db_config):
         self.server_id=server_id
