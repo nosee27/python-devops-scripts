@@ -8,7 +8,7 @@ def main():
         data=response.json()
         print(f"{data.get('origin','default')}")
     except Exception as e:
-        print(e)
+        print(f"错误原因为{e}")
     url2="https://api.github.com/repos/python/cpython"
     try:
         response=requests.get(url2,timeout=5)
@@ -17,6 +17,6 @@ def main():
         stars=data.get('stargazers_count','default')
         print(f"stars are {stars}")
     except Exception as e:
-        print(e)
+        print(f"错误原因为{e}")
 if __name__=="__main__":
     main()

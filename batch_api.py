@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor,as_completed
 db_config={
         'host':'localhost',
         'user':'root',
-        'password':'Yang228056@',
+        'password':'',
         'database':'devops',
         'charset':'utf8mb4'
         }
@@ -33,12 +33,9 @@ def call_api(ip):
         response.raise_for_status()
         data=response.json()
         origin=data.get("origin","default")
-        if ip in origin:
-            return ip, True, f"匹配成功，返回IP: {origin}"
-        else:
-            return ip, False, f"匹配no成功，返回IP: {origin}"
+        return ip,True,f"匹配成功ip为{origin}"
     except Exception as e:
-        print(e)
+        return ip,False,f"匹配失败原因为这个{e}"
 def main():
     ips=query_server_ips()
     if not ips:
