@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-from flask import Flask
+from flask import Flask,render_template
 app=Flask(__name__)
 @app.route('/')
-def helle():
-    return "Hello,DevOps"
+def index():
+    return render_template('index.html',message='欢迎来到运维平台')
+
 if __name__=="__main__":
-    app.run()
+    app.run(
+            host='0.0.0.0',port=5000,debug=True)
