@@ -136,12 +136,12 @@ def server_detail(server_id):
             return api_response(400,"没有提供任何需要更新的字段",None)
 
         values.append(server_id)
-        sql =f'update servers set {','.join(updata_filed)} where id = %s'
+        sql =f'update servers set {', '.join(updata_filed)} where id = %s'
 
         connection=None
         cursor=None
         try:
-            connection=pymysql.connect(**dn_config)
+            connection=pymysql.connect(**db_config)
             cursor=connection.cursor()
             cursor.execute(sql,values)
             connection.commit()
@@ -164,7 +164,7 @@ def server_detail(server_id):
             connection=pymysql.connect(**db_config)
             cursor=connection.cursor()
             sql='delete from servers where id = %s'
-            cursor.execute(sql,(server_id))
+            cursor.execute(sql,(server_id),)
             connection.commit()
             return api_response(200, "删除成功", None)
         except Exception as e:
