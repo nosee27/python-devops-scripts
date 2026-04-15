@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset==="UTF-8">
+	<title>用户年龄判断</title>
+</head>
+<body>
+	<h1>age:{{age}}</h1>
+	{% if age>=18 %}
+	    <p> 已成年，可以访问全部内容</p>
+	{% elif age >= 12 %}
+            <p>⚠️ 青少年，部分内容受限</p>
+        {% else %}
+            <p>❌ 未成年，请在家长陪同下访问</p>
+        {% endif %}
+</body>
+</html>
