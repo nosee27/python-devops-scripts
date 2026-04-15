@@ -19,6 +19,29 @@ db_config={
         'database':config.get('database','database'),
         'charset':config.get('database','charset')
 }
+def get_server_by_id(server_id):
+    connection=None
+    cursor=None
+    try:
+        connection=pymysql.connect(**db_config)
+        cursor=connection.cursor()
+        sql='select id,hostname,ip,cpu_cores,mem_gb from servers where id=%s'
+        cursor.execute(sql,(server_id))
+        row=cursor.fetchone()
+        if row:
+            return{
+                    'id':row[0],
+                    'hostname':row[1],
+                    'ip':row[2],
+                    'cpu_cores':row[3],
+                    'mem_gb':row[4]
+                    }
+        return None
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 @app.route('/api/servers',methods=['GET','POST'])
 def insert_data():
     if request.method=='GET':
@@ -79,34 +102,91 @@ def insert_data():
             if connection:
                 connection.close()
 
-@app.route('/api/servers/<int:server_id>')
-def get_server(server_id):
-    connection = None
-    cursor=None
-    try:
-        connection=pymysql.connect(**db_config)
-        cursor=connection.cursor()
-        sql='select id,hostname,ip,cpu_cores,mem_gb from servers where id = %s'
-        cursor.execute(sql,(server_id))
-        
-        row=cursor.fetchone()
-        if not row:
-            return api_response(404,"no exit",None)
-        server={
-                'id':row[0],
-                'hostname':row[1],
-                'ip':row[2],
-                'cpu_cores':row[3],
-                'mem_gb':row[4]
-                }
+@app.route('/api/servers/<int:server_id>',methods=['GET','PUT','DELETE'])
+def server_detail(server_id):
+    if request.method=='GET':
+        server=get_server_by_id(server_id)
+        if not server:
+            return api_response(404,"服务器不存在",None)
         return api_response(200,'success',server)
-    except Exception as e:
-        return api_response(500,f"wrong,{str(e)}",None)
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
+    elif request.method=='PUT':
+        server=get_server_by_id(server_id)
+        if not server:
+            return api_response(404,'服务器不存在',None)
+
+        data=request.get_json()
+        if not data:
+            return api_response(404,'wrong',None)
+        
+        fileds=['hostname','ip','cpu_cores','mem_gb']
+        updata_filed=[]
+        values=[]
+        for filed in fileds:
+            if filed in data:
+                if filed in ('cpu_cores','mem_gb'):
+                    try:
+                        val=int(data[filed])
+                    except Exception as e:
+                        return api_response(400,f"{filed} 必须是整数",None)
+                else:
+                    val=data[filed]
+                updata_filed.append(f"{filed} = %s")
+                values.append(val)
+        if not updata_filed:
+            return api_response(400,"没有提供任何需要更新的字段",None)
+
+        values.append(server_id)
+        sql =f'update servers set {','.join(updata_filed)} where id = %s'
+
+        connection=None
+        cursor=None
+        try:
+            connection=pymysql.connect(**dn_config)
+            cursor=connection.cursor()
+            cursor.execute(sql,values)
+            connection.commit()
+            updated_server=get_server_by_id(server_id)
+            return api_response(200,"更新成功",updated_server)
+        except Exception as e:
+            return api_response(500,f"数据库错误: {str(e)}",None)
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+    elif request.method=='DELETE':
+        server=get_server_by_id(server_id)
+        if not server:
+            return api_response(404, "服务器不存在", None)
+        connection=None
+        cursor=None
+        try:
+            connection=pymysql.connect(**db_config)
+            cursor=connection.cursor()
+            sql='delete from servers where id = %s'
+            cursor.execute(sql,(server_id))
+            connection.commit()
+            return api_response(200, "删除成功", None)
+        except Exception as e:
+            return api_response(500, f"删除失败: {str(e)}", None)
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__=="__main__":
     app.run(
